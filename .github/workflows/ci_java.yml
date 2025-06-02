@@ -41,7 +41,7 @@ jobs:
           curl -X POST "https://sonarcloud.io/api/projects/create" \
             -u "${{ secrets.SONAR_TOKEN }}:" \
             -d "organization=migracao-net" \
-            -d "project=$SONAR_PROJECT_KEY \
+            -d "project=$SONAR_PROJECT_KEY" \
             -d "name=${{ github.event.repository.name }}"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
