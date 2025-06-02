@@ -36,6 +36,16 @@ jobs:
       - name: Definir chave do projeto Sonar
         run: echo "SONAR_PROJECT_KEY=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
+      - name: Criar projeto no SonarCloud (se não existir)
+        run: |
+          curl -X POST "https://sonarcloud.io/api/projects/create" \
+            -u "${{ secrets.SONAR_TOKEN }}:" \
+            -d "organization=migracao-net" \
+            -d "project=$SONAR_PROJECT_KEY \
+            -d "name=${{ github.event.repository.name }}"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
