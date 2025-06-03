@@ -9,5 +9,7 @@ permissions:
   packages: write
 
 jobs:
-  use-reusable-workflow: 
+  use-reusable-workflow:
     uses: Migracao-NET/pipeline_templates/.github/workflows/javagradle_build.yml@main
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
