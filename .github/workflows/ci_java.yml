@@ -34,7 +34,7 @@ jobs:
         run: ./gradlew test
 
       - name: Definir chave do projeto Sonar
-        run: echo "SONAR_PROJECT_KEY=$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        run: echo "SONAR_PROJECT_KEY=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Criar projeto no SonarCloud (se não existir)
         run: |
