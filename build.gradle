@@ -31,7 +31,7 @@ tasks.named('test') {
 
 sonarqube {
     properties {
-        property "sonar.projectKey", "migracao-net_library_java_two"
+        property "sonar.projectKey", "library_java_two"
         property "sonar.projectName", "library_java_two"
         property "sonar.organization", "migracao-net"
     }
