@@ -29,12 +29,12 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-sonar {
-  properties {
-    property "sonar.projectKey", "library_java_two"
-    property "sonar.organization", "migracao-net"
-    property "sonar.host.url", "https://sonarcloud.io"
-  }
+sonarqube {
+    properties {
+        property "sonar.projectKey", "migracao-net_library_java_two"
+        property "sonar.projectName", "library_java_two"
+        property "sonar.organization", "migracao-net"
+    }
 }
 
 // publishing {
