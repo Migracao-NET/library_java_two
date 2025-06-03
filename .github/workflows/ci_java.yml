@@ -33,34 +33,53 @@ jobs:
       - name: Run Tests
         run: ./gradlew test
 
-      - name: Definir chave do projeto Sonar
-        run: echo "SONAR_PROJECT_KEY=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      - name: Criar projeto no SonarCloud (se não existir)
-        run: |
-          curl -X POST "https://sonarcloud.io/api/projects/create" \
-            -u "${{ secrets.SONAR_TOKEN }}:" \
-            -d "organization=migracao-net" \
-            -d "project=$SONAR_PROJECT_KEY" \
-            -d "name=${{ github.event.repository.name }}"
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
         with:
-          args: >
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.organization=migracao-net
-            -Dsonar.projectKey=$SONAR_PROJECT_KEY
-            -Dsonar.projectName=${{ github.event.repository.name }}
-            -Dsonar.sources=src
-            -Dsonar.tests=src/test
-            -Dsonar.java.binaries=build/classes
-            -Dsonar.branch.name=main
-            -Dsonar.verbose=true
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+          
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonar --info
+
+      # - name: Definir chave do projeto Sonar
+      #   run: echo "SONAR_PROJECT_KEY=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      # - name: Criar projeto no SonarCloud (se não existir)
+      #   run: |
+      #     curl -X POST "https://sonarcloud.io/api/projects/create" \
+      #       -u "${{ secrets.SONAR_TOKEN }}:" \
+      #       -d "organization=migracao-net" \
+      #       -d "project=$SONAR_PROJECT_KEY" \
+      #       -d "name=${{ github.event.repository.name }}"
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # - name: SonarCloud Scan
+      #   uses: SonarSource/sonarqube-scan-action@v5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   with:
+      #     args: >
+      #       -Dsonar.host.url=https://sonarcloud.io
+      #       -Dsonar.organization=migracao-net
+      #       -Dsonar.projectKey=$SONAR_PROJECT_KEY
+      #       -Dsonar.projectName=${{ github.event.repository.name }}
+      #       -Dsonar.sources=src
+      #       -Dsonar.tests=src/test
+      #       -Dsonar.java.binaries=build/classes
+      #       -Dsonar.branch.name=main
+      #       -Dsonar.verbose=true
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

@@ -3,7 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 	// id 'maven-publish'
-	// id "org.sonarqube" version "6.2.0.5505"
+	id "org.sonarqube" version "6.2.0.5505"
 }
 
 group = 'com.example'
@@ -29,11 +29,13 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-// sonar {
-//   properties {
-//     property "sonar.host.url", "https://sonarcloud.io"
-//   }
-// }
+sonar {
+  properties {
+    property "sonar.projectKey", "library_java_two"
+    property "sonar.organization", "migracao-net"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
 
 // publishing {
 // 	publications {
