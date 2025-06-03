@@ -1,88 +1,10 @@
 name: Java CI with Gradle
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: 
   workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Permitir execução do gradlew
-        run: chmod +x gradlew
-
-      - name: Build with Gradle
-        run: ./gradlew build
-
-      - name: Run Tests
-        run: ./gradlew test
-
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-          
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
-
-      # - name: Definir chave do projeto Sonar
-      #   run: echo "SONAR_PROJECT_KEY=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      # - name: Criar projeto no SonarCloud (se não existir)
-      #   run: |
-      #     curl -X POST "https://sonarcloud.io/api/projects/create" \
-      #       -u "${{ secrets.SONAR_TOKEN }}:" \
-      #       -d "organization=migracao-net" \
-      #       -d "project=$SONAR_PROJECT_KEY" \
-      #       -d "name=${{ github.event.repository.name }}"
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      # - name: SonarCloud Scan
-      #   uses: SonarSource/sonarqube-scan-action@v5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   with:
-      #     args: >
-      #       -Dsonar.host.url=https://sonarcloud.io
-      #       -Dsonar.organization=migracao-net
-      #       -Dsonar.projectKey=$SONAR_PROJECT_KEY
-      #       -Dsonar.projectName=${{ github.event.repository.name }}
-      #       -Dsonar.sources=src
-      #       -Dsonar.tests=src/test
-      #       -Dsonar.java.binaries=build/classes
-      #       -Dsonar.branch.name=main
-      #       -Dsonar.verbose=true
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Package
-          path: build/libs
+  use-reusable-workflow: 
+    uses: Migracao-NET/pipeline_templates/.github/workflows/javagradle_build.yml@main
